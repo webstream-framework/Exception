@@ -1,7 +1,6 @@
 <?php
 namespace WebStream\Exception\Test;
 
-require_once dirname(__FILE__) . '/../Modules/DI/Injector.php';
 require_once dirname(__FILE__) . '/../Modules/Container/Container.php';
 require_once dirname(__FILE__) . '/../Test/Fixtures/InjectedClass.php';
 require_once dirname(__FILE__) . '/../Test/Providers/ExceptionDelegatorProvider.php';
