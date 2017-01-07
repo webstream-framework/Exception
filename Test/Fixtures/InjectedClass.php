@@ -3,8 +3,8 @@ namespace WebStream\Exception\Test\Fixtures;
 
 class InjectedClass
 {
-    public function method1()
+    public function handled1($params)
     {
-
+        echo "handled";
     }
 }

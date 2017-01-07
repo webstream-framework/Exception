@@ -10,6 +10,11 @@ class ExceptionDelegator
     use Injector;
 
     /**
+     * @var Logger ロガー
+     */
+    private $logger;
+
+    /**
      * @var object インスタンス
      */
     private $instance;
@@ -18,6 +23,7 @@ class ExceptionDelegator
      * @var string メソッド名
      */
     private $method;
+
     /**
      * @var \Exception 例外オブジェクト
      */
@@ -37,6 +43,7 @@ class ExceptionDelegator
         $this->method = $method;
         $this->exceptionObject = $exceptionObject;
         $this->exceptionHandler = [];
+        $this->logger = new class() { function __call($name, $args) {} };
     }
 
     /**
@@ -53,44 +60,37 @@ class ExceptionDelegator
      */
     public function raise()
     {
-        // 捕捉可能な例外の場合のみDelegateExceptionでラップする
-        // そうでない場合はそのままスロー
-        if ($this->exceptionObject instanceof SystemException) {
-            throw $this->exceptionObject;
-        } else {
-            $originException = $this->exceptionObject;
-            $delegateException = null;
-            if ($originException instanceof DelegateException) {
-                // 複数レイヤ間で例外がやりとりされる場合、すでにDelegateExceptionでラップ済みなので戻す
-                $originException = $delegateException->getOriginException();
-            }
-            $invokeMethods = [];
-            foreach ($this->exceptionHandler as $exceptionHandlerAnnotation) {
-                $exceptions = $exceptionHandlerAnnotation->exceptions;
-                $refMethod = $exceptionHandlerAnnotation->method;
-                foreach ($exceptions as $exception) {
-                    if (is_a($originException, $exception)) {
-                        // 一つのメソッドに複数の捕捉例外が指定された場合(派生例外クラス含む)、先勝で1回のみ実行する
-                        // そうでなければ複数回メソッドが実行されるため
-                        // ただし同一クラス内に限る(親クラスの同一名のメソッドは実行する)
-                        // TODO ここはテストを追加する
-                        $classpath = $refMethod->class . "#" . $refMethod->name;
-                        if (!array_key_exists($classpath, $invokeMethods)) {
-                            $invokeMethods[$classpath] = $refMethod;
-                        }
+        $originException = $this->exceptionObject;
+        $delegateException = null;
+        if ($originException instanceof DelegateException) {
+            // 複数レイヤ間で例外がやりとりされる場合、すでにDelegateExceptionでラップ済みなので戻す
+            $originException = $originException->getOriginException();
+        }
+        $invokeMethods = [];
+        foreach ($this->exceptionHandler as $exceptionHandlerAnnotation) {
+            $exceptions = $exceptionHandlerAnnotation->exceptions;
+            $refMethod = $exceptionHandlerAnnotation->method;
+            foreach ($exceptions as $exception) {
+                if (is_a($exception, get_class($originException))) {
+                    // 一つのメソッドに複数の捕捉例外が指定された場合(派生例外クラス含む)、先勝で1回のみ実行する
+                    // そうでなければ複数回メソッドが実行されるため
+                    // ただし同一クラス内に限る(親クラスの同一名のメソッドは実行する)
+                    $classpath = $refMethod->class . "#" . $refMethod->name;
+                    if (!array_key_exists($classpath, $invokeMethods)) {
+                        $invokeMethods[$classpath] = $refMethod;
                     }
                 }
             }
-            if (count($invokeMethods) > 0) {
-                $delegateException = new DelegateException($this->exceptionObject);
-                $delegateException->enableHandled();
-            }
-            foreach ($invokeMethods as $classpath => $invokeMethod) {
-                $params = ["class" => get_class($this->instance), "method" => $this->method, "exception" => $originException];
-                $invokeMethod->invokeArgs($this->instance, [$params]);
-                $this->logger->debug("Execution of handling is success: " . $classpath);
-            }
-            throw $delegateException ?: $originException;
         }
+        if (count($invokeMethods) > 0) {
+            $delegateException = new DelegateException($this->exceptionObject);
+            $delegateException->enableHandled();
+        }
+        foreach ($invokeMethods as $classpath => $invokeMethod) {
+            $params = ["class" => get_class($this->instance), "method" => $this->method, "exception" => $originException];
+            $invokeMethod->invokeArgs($this->instance, [$params]);
+            $this->logger->debug("Execution of handling is success: " . $classpath);
+        }
+        throw $delegateException ?: $originException;
     }
 }

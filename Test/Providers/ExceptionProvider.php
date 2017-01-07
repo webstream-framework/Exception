@@ -9,7 +9,6 @@ use WebStream\Exception\Extend\CollectionException;
 use WebStream\Exception\Extend\CsrfException;
 use WebStream\Exception\Extend\DatabaseException;
 use WebStream\Exception\Extend\ForbiddenAccessException;
-
 use WebStream\Exception\Extend\InvalidArgumentException;
 use WebStream\Exception\Extend\InvalidRequestException;
 use WebStream\Exception\Extend\IOException;

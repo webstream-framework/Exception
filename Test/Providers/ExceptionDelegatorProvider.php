@@ -3,6 +3,7 @@ namespace WebStream\Exception\Test\Providers;
 
 use WebStream\Exception\ApplicationException;
 use WebStream\Exception\SystemException;
+use WebStream\Exception\DelegateException;
 
 /**
  * ExceptionDelegatorProvider
@@ -15,15 +16,9 @@ trait ExceptionDelegatorProvider
     public function exceptionProvider()
     {
         return [
-            [new SystemException("SystemException")],
-            [new ApplicationException("ApplicationException")]
-        ];
-    }
-
-    public function applicationExceptionProvider()
-    {
-        return [
-            [new ApplicationException("ApplicationExcecption")]
+            [new SystemException("error message")],
+            [new ApplicationException("error message")],
+            [new DelegateException(new ApplicationException("error message"))]
         ];
     }
 }
