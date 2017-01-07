@@ -28,17 +28,18 @@ class SystemException extends \RuntimeException
             $exception = $this;
         }
 
-        $this->errorMessage = get_class($exception) . " is thrown: " . $exception->getFile() . "(" . $exception->getLine() . ")";
-
         if (!empty($message)) {
-            $stacktraceList = explode("#", $stacktrace);
-            foreach ($stacktraceList as $stacktraceLine) {
-                if ($stacktraceLine === "") {
-                    continue;
-                }
-                $this->errorMessage .= PHP_EOL;
-                $this->errorMessage .= "\t#" . trim($stacktraceLine);
+            $message .= " ";
+        }
+
+        $this->errorMessage = get_class($exception) . " is thrown: " . $message . $exception->getFile() . "(" . $exception->getLine() . ")";
+        $stacktraceList = explode("#", $exception->getTraceAsString());
+        foreach ($stacktraceList as $stacktraceLine) {
+            if ($stacktraceLine === "") {
+                continue;
             }
+            $this->errorMessage .= PHP_EOL;
+            $this->errorMessage .= "\t#" . trim($stacktraceLine);
         }
     }
 
