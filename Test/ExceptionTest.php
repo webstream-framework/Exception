@@ -42,7 +42,6 @@ class ExceptionTest extends \PHPUnit_Framework_TestCase
      */
     public function okExceptionMessageTest($exception)
     {
-        var_dump($exception->getExceptionAsString());
         $this->assertNotNull($exception->getExceptionAsString());
     }
 }
