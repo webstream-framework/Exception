@@ -69,7 +69,7 @@ class ExceptionDelegatorTest extends \PHPUnit\Framework\TestCase
         }
 
         if (!$isAsserted) {
-            $this->assertTrue($false);
+            $this->assertTrue(false);
         }
     }
 }
