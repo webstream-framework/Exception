@@ -19,10 +19,10 @@ use WebStream\Exception\Test\Fixtures\InjectedClass;
 use WebStream\Exception\Test\Providers\ExceptionDelegatorProvider;
 
 /**
-* ExceptionDelegatorTest
-* @author Ryuichi TANAKA.
-* @since 2017/01/07
-* @version 0.7
+ * ExceptionDelegatorTest
+ * @author Ryuichi TANAKA.
+ * @since 2017/01/07
+ * @version 0.7
  */
 class ExceptionDelegatorTest extends \PHPUnit\Framework\TestCase
 {
@@ -35,10 +35,10 @@ class ExceptionDelegatorTest extends \PHPUnit\Framework\TestCase
      * @dataProvider exceptionProvider
      * @expectedException \Exception
      */
-    public function okDelegatableExceptionTest($handledException, $exceptionObject)
+    public function okDelegatableExceptionTest($handledException, $exceptionClass)
     {
         $instance = new InjectedClass();
-        $delegator = new ExceptionDelegator($instance, $exceptionObject);
+        $delegator = new ExceptionDelegator($instance, new $exceptionClass("error message"));
         $delegator->raise();
         $this->assertTrue(false);
     }
