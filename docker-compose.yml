@@ -1,0 +1,15 @@
+version: '3'
+services:
+  webstream-framework-exception:
+    build: ./
+    image: webstream-framework/exception
+    container_name: webstream-framework-exception
+    volumes:
+        - ./:/workspace
+    working_dir: /workspace
+    tty: true
+    networks:
+      - webstream_framework
+networks:
+  webstream_framework:
+    external: true
