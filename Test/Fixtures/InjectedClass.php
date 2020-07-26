@@ -1,4 +1,5 @@
 <?php
+
 namespace WebStream\Exception\Test\Fixtures;
 
 class InjectedClass

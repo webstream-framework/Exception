@@ -1,8 +1,8 @@
 <?php
+
 namespace WebStream\Exception\Delegate;
 
 use WebStream\DI\Injector;
-use WebStream\Exception\SystemException;
 use WebStream\Exception\DelegateException;
 
 /**
@@ -49,7 +49,7 @@ class ExceptionDelegator
         $this->method = $method;
         $this->exceptionObject = $exceptionObject;
         $this->exceptionHandler = [];
-        $this->logger = new class() { function __call($name, $args) {} };
+        $this->logger = new class () { public function __call($name, $args) {} };
     }
 
     /**
