@@ -1,4 +1,5 @@
 <?php
+
 namespace WebStream\Exception\Test\Providers;
 
 use WebStream\Exception\ApplicationException;

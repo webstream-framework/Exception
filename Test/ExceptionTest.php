@@ -1,4 +1,5 @@
 <?php
+
 namespace WebStream\Exception\Test;
 
 require_once dirname(__FILE__) . '/../Modules/DI/Injector.php';

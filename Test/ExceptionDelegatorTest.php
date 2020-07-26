@@ -1,4 +1,5 @@
 <?php
+
 namespace WebStream\Exception\Test;
 
 require_once dirname(__FILE__) . '/../Modules/DI/Injector.php';
@@ -9,8 +10,6 @@ require_once dirname(__FILE__) . '/../ApplicationException.php';
 require_once dirname(__FILE__) . '/../SystemException.php';
 require_once dirname(__FILE__) . '/../DelegateException.php';
 
-use WebStream\Exception\ApplicationException;
-use WebStream\Exception\SystemException;
 use WebStream\Exception\DelegateException;
 use WebStream\Exception\Delegate\ExceptionDelegator;
 use WebStream\Exception\Test\Fixtures\InjectedClass;
@@ -31,14 +30,14 @@ class ExceptionDelegatorTest extends \PHPUnit\Framework\TestCase
      * 例外オブジェクトを保持でき、任意のタイミングでスローできること
      * @test
      * @dataProvider exceptionProvider
-     * @expectedException \Exception
      */
     public function okDelegatableExceptionTest($handledException, $exceptionClass)
     {
+        $this->expectException(\Exception::class);
         $instance = new InjectedClass();
         $delegator = new ExceptionDelegator($instance, new $exceptionClass("error message"));
         $delegator->raise();
-        $this->assertTrue(false);
+        $this->fail();
     }
 
     /**
@@ -68,7 +67,7 @@ class ExceptionDelegatorTest extends \PHPUnit\Framework\TestCase
         }
 
         if (!$isAsserted) {
-            $this->assertTrue(false);
+            $this->fail();
         }
     }
 }
